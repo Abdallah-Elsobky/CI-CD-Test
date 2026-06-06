@@ -19,7 +19,7 @@ class CalculatorTest {
     fun divide_returnsCorrectResult() {
         val result = calculator.divide(10, 2)
 
-        assertEquals(5, result)
+        assertEquals(6, result)
     }
 
     @Test

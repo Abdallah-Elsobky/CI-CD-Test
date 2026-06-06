@@ -1,27 +1,53 @@
+name: Android CI
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  lint:
-    name: Perform lint check
+
+  test:
+
+    name: Run Tests & Lint
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the code
+
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Run lint
-        run: ./gradlew lintDebug
+      - name: Run Unit Tests
+        run: ./gradlew test
 
-      - name: Upload html test report
+      - name: Run Lint
+        run: ./gradlew lint
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: lint.html
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
           path: app/build/reports/lint-results-debug.html
